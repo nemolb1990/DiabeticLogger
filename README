@@ -1,0 +1,41 @@
+Glucose reader for Diabetics
+
+This is simple logging program for diabetic.
+
+It consists of Diatete.py that controls, modify and summarize the log, diabeteicDB.py that controls the database, and Summary.py that is responsible for generating user readable summary.
+
+currently, there's table with following definition:
+entries
++-------+------------------------+------+-----+---------+----------------+
+| Field | Type                   | Null | Key | Default | Extra          |
++-------+------------------------+------+-----+---------+----------------+
+| id    | int(11)                | NO   | PRI | NULL    | auto_increment |
+| type  | enum('glucose','meal') | NO   |     | NULL    |                |
++-------+------------------------+------+-----+---------+----------------+
+foodConsumed;
++--------------+----------+------+-----+---------+-------+
+| Field        | Type     | Null | Key | Default | Extra |
++--------------+----------+------+-----+---------+-------+
+| id           | int(11)  | NO   | PRI | NULL    |       |
+| entryId      | int(11)  | NO   | MUL | NULL    |       |
+| foodId       | int(11)  | NO   | MUL | NULL    |       |
+| consumedTime | datetime | NO   |     | NULL    |       |
++--------------+----------+------+-----+---------+-------+
+foodInfo;
++-------+--------------+------+-----+---------+----------------+
+| Field | Type         | Null | Key | Default | Extra          |
++-------+--------------+------+-----+---------+----------------+
+| id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+| name  | varchar(255) | NO   |     | NULL    |                |
+| carb  | int(11)      | NO   |     | NULL    |                |
++-------+--------------+------+-----+---------+----------------+
+glucose;
++--------------+----------+------+-----+---------+-------+
+| Field        | Type     | Null | Key | Default | Extra |
++--------------+----------+------+-----+---------+-------+
+| id           | int(11)  | NO   | PRI | NULL    |       |
+| entryId      | int(11)  | NO   | MUL | NULL    |       |
+| glucoseLevel | int(11)  | NO   |     | NULL    |       |
+| measuredTime | datetime | NO   |     | NULL    |       |
++--------------+----------+------+-----+---------+-------+
+
