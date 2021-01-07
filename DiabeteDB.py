@@ -1,23 +1,23 @@
 #!/usr/bin/python3
 
-import databaseconfig as cfg:
+import databaseconfig as cfg
 import mysql.connector
 
 class DiabeteDB:
     """DiabeteDB
     Class that manages the data for the Diabete database.
     Every method in this class that is related to grabbing data from database will return the result
-    in the form on {"result": "success/fail", "data": [list of grabbed data]}
-    Every method in this class that is related to adding data to database will return boolean that
-    indicate whether add was successful or not.
+    in the form of {"result": "success/fail", "data": [list of grabbed data]}
+    Every method in this class that is related to adding data to database will return the result in the
+    form of {"result": "success/fail", "data": "Id of last insert"}
     """
 
     def __init__(self):
         """DiabeteDB class constructor
         Creates connection for diabete database by using the database configuration.
-        This configuration is saved in databseconfig.py
+        This configuration is saved in databaseconfig.py
         """
-        self.conn = mysql.connector.connect(user=cfg["user"], password=cfg["passwd"], databse=cfg["db"])
+        self.conn = mysql.connector.connect(user=cfg.mysql["user"], password=cfg.mysql["passwd"], database=cfg.mysql["db"])
 
     def __del__(self):
         """DiabeteDB class destructor
@@ -32,7 +32,7 @@ class DiabeteDB:
         It only grabs one entry out of table
         """
 
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         cursor.execute(""" SELECT id, type FROM entries where id = %s
         """, (id,))
         row = cursor.fetchone()
@@ -47,26 +47,27 @@ class DiabeteDB:
         return {"result": "success", 
                 "data": [{"id": entryId, "type": entryType}]}
 
-    def addEntry(self, type):
+    def addEntry(self, entryType, name):
         """addEntry
+        @param entryName
         @param entryType
         Add new entry to entries table.
         If insert was successful, it returns true, else false.
         """
 
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         cursor.execute(""" INSERT INTO entries
-        (type) VALUES (%s)
-        """, (type, ))
+        (name, type) VALUES (%s, %s)
+        """, (name, entryType))
 
         entryId = cursor.lastrowid
         self.conn.commit()
         cursor.close()
 
         if entryId is None:
-            return False
+            return {"result": "failed", "data": []}
         
-        return True
+        return {"result": "success", "data": {"entryId": entryId}}
 
     def getFoodInfoByName(self, name):
         """getFoodInfoByName
@@ -74,7 +75,7 @@ class DiabeteDB:
         Find and return the food information in foodInfo table by using name.
         """
 
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         cursor.execute("""SELECT id, name, carb FROM foodInfo WHERE name = %s
         """, (name.lower(), ))
         rows = cursor.fetchall()
@@ -100,7 +101,7 @@ class DiabeteDB:
         Add food information to the foodInfo table. This does not check for duplicate
         """
 
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         cursor.execute("""INSERT INTO foodInfo
         (name, carb) VALUES (%s, %s)""", (name, carb))
 
@@ -109,15 +110,15 @@ class DiabeteDB:
         cursor.close()
 
         if foodInfoId is None:
-            return False
+            return {"result": "failed", "data": []}
 
-        return True
+        return {"result": "success", "data": {"foodInfoId": foodInfoId}}
 
     def getFoodConsumed(self, entryId):
 
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         cursor.execute("""SELECT id, entryId, foodId, consumedTime FROM foodConsumed WHERE entryId = %s
-        """, (entryId, )
+        """, (entryId, ))
         rows = cursor.fetchall()
 
         if len(rows) == 0:
@@ -137,7 +138,7 @@ class DiabeteDB:
 
     def addFoodConsume(self, entryId, foodId, consumedTime):
         
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         cursor.execute("""INSERT INTO foodConsumed
         (entryId, foodId, consumedTime) VALUES (%s, %s, %s)""", (entryId, foodId, consumedTime))
 
@@ -146,15 +147,15 @@ class DiabeteDB:
         cursor.close()
 
         if consumeId is None:
-            return False
+            return {"result": "failed", "data": []}
 
-        return True
+        return {"result": "success", "data": {"consumeId": consumeId}}
         
     def getGlucose(self, entryId):
         
-        cursor = conn.cursor()
-        cursor.execute("""SELECT id, entryID, glucoseLevel, measuredTime FROM glucose WHERE entryId = %s
-        """, (entryId, )
+        cursor = self.conn.cursor()
+        cursor.execute("""SELECT id, entryId, glucoseLevel, measuredTime FROM glucose WHERE entryId = %s
+        """, (entryId, ))
         row = cursor.fetchone()
 
         if row is None:
@@ -175,3 +176,18 @@ class DiabeteDB:
                             }
                           ]
                 }
+
+    def addGlucose(self, entryId, glucoseLevel, measuredTime):
+
+        cursor = self.conn.cursor()
+        cursor.execute(""" INSERT INTO glucose (entryId, glucoseLevel, measuredTime) 
+        VALUES (%s, %s, %s)""", (entryId, glucoseLevel, measuredTime))
+
+        glucoseId = cursor.lastrowid
+        self.conn.commit()
+        cursor.close()
+
+        if glucoseId is None:
+            return {"result": "failed", "data": []}
+
+        return {"result": "success", "data": {"glucoseId": glucoseId}}

@@ -10,6 +10,7 @@ entries
 | Field | Type                   | Null | Key | Default | Extra          |
 +-------+------------------------+------+-----+---------+----------------+
 | id    | int(11)                | NO   | PRI | NULL    | auto_increment |
+| name  | varchar(255)           | NO   |     | NULL    |                |
 | type  | enum('glucose','meal') | NO   |     | NULL    |                |
 +-------+------------------------+------+-----+---------+----------------+
 foodConsumed;
