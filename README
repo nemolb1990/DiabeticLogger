@@ -2,9 +2,13 @@ Glucose reader for Diabetics
 
 This is simple logging program for diabetic.
 
-It consists of Diatete.py that controls, modify and summarize the log, diabeteicDB.py that controls the database, and Summary.py that is responsible for generating user readable summary.
+It consists of 
+    - Diatete.py that controls, modify and summarize the log 
+    - DiabeteicDB.py that controls the database
+    - test.py, the simple testing script to check if everything is working
+    - resetDB.sql to delete every data in the database during the testing.
 
-currently, there's table with following definition:
+currently, there are 4 tables with following definition:
 entries
 +-------+------------------------+------+-----+---------+----------------+
 | Field | Type                   | Null | Key | Default | Extra          |
@@ -14,14 +18,14 @@ entries
 | type  | enum('glucose','meal') | NO   |     | NULL    |                |
 +-------+------------------------+------+-----+---------+----------------+
 foodConsumed;
-+--------------+----------+------+-----+---------+-------+
-| Field        | Type     | Null | Key | Default | Extra |
-+--------------+----------+------+-----+---------+-------+
-| id           | int(11)  | NO   | PRI | NULL    |       |
-| entryId      | int(11)  | NO   | MUL | NULL    |       |
-| foodId       | int(11)  | NO   | MUL | NULL    |       |
-| consumedTime | datetime | NO   |     | NULL    |       |
-+--------------+----------+------+-----+---------+-------+
++--------------+----------+------+-----+---------+----------------+
+| Field        | Type     | Null | Key | Default | Extra          |
++--------------+----------+------+-----+---------+----------------+
+| id           | int(11)  | NO   | PRI | NULL    | auto_increment |
+| entryId      | int(11)  | NO   | MUL | NULL    |                |
+| foodId       | int(11)  | NO   | MUL | NULL    |                |
+| consumedTime | datetime | NO   |     | NULL    |                |
++--------------+----------+------+-----+---------+----------------+
 foodInfo;
 +-------+--------------+------+-----+---------+----------------+
 | Field | Type         | Null | Key | Default | Extra          |
@@ -31,12 +35,25 @@ foodInfo;
 | carb  | int(11)      | NO   |     | NULL    |                |
 +-------+--------------+------+-----+---------+----------------+
 glucose;
-+--------------+----------+------+-----+---------+-------+
-| Field        | Type     | Null | Key | Default | Extra |
-+--------------+----------+------+-----+---------+-------+
-| id           | int(11)  | NO   | PRI | NULL    |       |
-| entryId      | int(11)  | NO   | MUL | NULL    |       |
-| glucoseLevel | int(11)  | NO   |     | NULL    |       |
-| measuredTime | datetime | NO   |     | NULL    |       |
-+--------------+----------+------+-----+---------+-------+
++--------------+----------+------+-----+---------+----------------+
+| Field        | Type     | Null | Key | Default | Extra          |
++--------------+----------+------+-----+---------+----------------+
+| id           | int(11)  | NO   | PRI | NULL    | auto_increment |
+| entryId      | int(11)  | NO   | MUL | NULL    |                |
+| glucoseLevel | int(11)  | NO   |     | NULL    |                |
+| measuredTime | datetime | NO   |     | NULL    |                |
++--------------+----------+------+-----+---------+----------------+
 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+This is example classes to display my coding style.
+This project does NOT have main.
+
+The Project is not 100% complete but functional on purpose to show the certain characteristic of my coding style.
+
+#TODO will show how I mark what needs to be done in the future for other people to see.
+""" Triple quotation mark is the summary of the class or the method.
+@param specify what kind of param the function is looking for next to it in () is the type of variable it is supposed to be.
+@return specify what kind of return it should be expecting if the whole class has same form of return, this might not be present, instead inside the summary of the class
+# brief explanation of the code if the method gets overly complicated.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -27,9 +27,9 @@ class DiabeteDB:
 
     def getEntry(self, id):
         """getEntry
-        @param entryId
-        Getter for entries table.
-        It only grabs one entry out of table
+        @param entryId (int)
+
+        It only grabs one entry out of table based on the id
         """
 
         cursor = self.conn.cursor()
@@ -49,10 +49,10 @@ class DiabeteDB:
 
     def addEntry(self, entryType, name):
         """addEntry
-        @param entryName
-        @param entryType
+        @param entryType (string)
+        @param entryName (string)
+
         Add new entry to entries table.
-        If insert was successful, it returns true, else false.
         """
 
         cursor = self.conn.cursor()
@@ -69,9 +69,30 @@ class DiabeteDB:
         
         return {"result": "success", "data": {"entryId": entryId}}
 
+    def delEntry(self, entryId):
+        """delEntry
+        @param entryId (int)
+        
+        Only method in this class the returns JSON that only contains result.
+        """
+
+        cursor = self.conn.cursor()
+        cursor.execute("""DELETE FROM entries where ID = %s""", (entryId,))
+
+        self.conn.commit()
+        cursor.close()
+
+        confirm = self.getEntry(entryId)
+
+        if confirm["result"] == "failed":
+            return {"result": "success"}
+        else:
+            return {"result": "failed"}
+
     def getFoodInfoByName(self, name):
         """getFoodInfoByName
-        @param foodName
+        @param foodName (string)
+
         Find and return the food information in foodInfo table by using name.
         """
 
@@ -94,10 +115,13 @@ class DiabeteDB:
 
         return {"result": "success", "data": result}
     
+    #TODO: Maybe getFoodInfo By ID? or getAllFoodInfo?
+
     def addFoodInfo(self, name, carb):
         """addFoodInfo
-        @param foodName
-        @param carb
+        @param foodName (string)
+        @param carb (int)
+
         Add food information to the foodInfo table. This does not check for duplicate
         """
 
@@ -115,6 +139,11 @@ class DiabeteDB:
         return {"result": "success", "data": {"foodInfoId": foodInfoId}}
 
     def getFoodConsumed(self, entryId):
+        """getFoodConsumed
+        @param entryId (int)
+
+        Get food consumed based on the entry Id
+        """
 
         cursor = self.conn.cursor()
         cursor.execute("""SELECT id, entryId, foodId, consumedTime FROM foodConsumed WHERE entryId = %s
@@ -136,7 +165,14 @@ class DiabeteDB:
 
         return {"result":"success", "data": result}
 
-    def addFoodConsume(self, entryId, foodId, consumedTime):
+    def addFoodConsumed(self, entryId, foodId, consumedTime):
+        """AddFoodConsumed
+        @param entryId (int)
+        @param foodId (int)
+        @param consumedTime (datetime String)
+
+        add food consumed in foodConsumed table
+        """
         
         cursor = self.conn.cursor()
         cursor.execute("""INSERT INTO foodConsumed
@@ -149,9 +185,16 @@ class DiabeteDB:
         if consumeId is None:
             return {"result": "failed", "data": []}
 
-        return {"result": "success", "data": {"consumeId": consumeId}}
+        return {"result": "success", "data": {"consumedId": consumeId}}
+
+    #TODO: Del food consumed? Will there be case to delete foodconsumed?
         
     def getGlucose(self, entryId):
+        """getGlucose
+        @param entryId (int)
+
+        grab glucose information based on entryId
+        """
         
         cursor = self.conn.cursor()
         cursor.execute("""SELECT id, entryId, glucoseLevel, measuredTime FROM glucose WHERE entryId = %s
@@ -178,6 +221,13 @@ class DiabeteDB:
                 }
 
     def addGlucose(self, entryId, glucoseLevel, measuredTime):
+        """addGlucose
+        @param entryId (int)
+        @param glucoseLevel (int)
+        @param measuredTime (datetime String)
+
+        add glucose information in Glucose table
+        """
 
         cursor = self.conn.cursor()
         cursor.execute(""" INSERT INTO glucose (entryId, glucoseLevel, measuredTime) 
@@ -191,3 +241,5 @@ class DiabeteDB:
             return {"result": "failed", "data": []}
 
         return {"result": "success", "data": {"glucoseId": glucoseId}}
+
+    #TODO: Maybe get Glucose by ID? get all glucose? get glucose above/below threshhold during certain time?
